@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ "Entrar" if modo == "login" else "Criar conta" }} · Tarefas</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="estreito">
+    <p class="tag">flask + postgresql</p>
+    <h1>{{ "Entrar" if modo == "login" else "Criar conta" }}</h1>
+
+    {% if modo == "login" %}
+      <p class="sub">Entre para ver suas tarefas.</p>
+      <form method="post" action="{{ url_for('login') }}" class="empilhado">
+        <label>Usuário
+          <input name="usuario" value="{{ usuario or '' }}" autocomplete="username" required autofocus>
+        </label>
+        <label>Senha
+          <input name="senha" type="password" autocomplete="current-password" required>
+        </label>
+        {% if erro %}<p class="erro">{{ erro }}</p>{% endif %}
+        <button type="submit">Entrar</button>
+      </form>
+      <p class="troca">Não tem conta? <a href="{{ url_for('cadastro') }}">Criar conta</a></p>
+    {% else %}
+      <p class="sub">Escolha um usuário e uma senha de pelo menos 8 caracteres.</p>
+      <form method="post" action="{{ url_for('cadastro') }}" class="empilhado">
+        <label>Usuário
+          <input name="usuario" value="{{ usuario or '' }}" autocomplete="username" minlength="3" maxlength="30" required autofocus>
+        </label>
+        <label>Senha
+          <input name="senha" type="password" autocomplete="new-password" minlength="8" required>
+        </label>
+        <label>Confirmar senha
+          <input name="confirmar" type="password" autocomplete="new-password" minlength="8" required>
+        </label>
+        {% if erro %}<p class="erro">{{ erro }}</p>{% endif %}
+        <button type="submit">Criar conta</button>
+      </form>
+      <p class="troca">Já tem conta? <a href="{{ url_for('login') }}">Entrar</a></p>
+    {% endif %}
+  </main>
+</body>
+</html>

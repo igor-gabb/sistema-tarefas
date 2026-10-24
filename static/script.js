@@ -12,10 +12,19 @@ function mostrarErro(msg) {
   erro.textContent = msg || "";
 }
 
+// Se a sessão expirou, o servidor responde 401: manda de volta para o login
+function checarLogin(resp) {
+  if (resp.status === 401) {
+    window.location.href = "/login";
+    throw new Error("sem login");
+  }
+  return resp;
+}
+
 // Busca todas as tarefas no servidor e desenha a lista
 async function carregar() {
   try {
-    const resp = await fetch("/api/tarefas");
+    const resp = checarLogin(await fetch("/api/tarefas"));
     if (!resp.ok) throw new Error();
     const tarefas = await resp.json();
     desenhar(tarefas);
@@ -65,11 +74,11 @@ form.addEventListener("submit", async (e) => {
   mostrarErro("");
 
   try {
-    const resp = await fetch("/api/tarefas", {
+    const resp = checarLogin(await fetch("/api/tarefas", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ titulo }),
-    });
+    }));
     const dados = await resp.json();
     if (!resp.ok) return mostrarErro(dados.erro);
     campo.value = "";
@@ -84,13 +93,13 @@ form.addEventListener("submit", async (e) => {
 
 // Marcar/desmarcar (PATCH)
 async function alternar(id) {
-  await fetch(`/api/tarefas/${id}`, { method: "PATCH" });
+  checarLogin(await fetch(`/api/tarefas/${id}`, { method: "PATCH" }));
   carregar();
 }
 
 // Excluir (DELETE)
 async function excluir(id) {
-  await fetch(`/api/tarefas/${id}`, { method: "DELETE" });
+  checarLogin(await fetch(`/api/tarefas/${id}`, { method: "DELETE" }));
   carregar();
 }
 

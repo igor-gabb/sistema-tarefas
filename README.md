@@ -4,7 +4,9 @@ Mini sistema para estudar as três partes de um site com banco de dados:
 
 - **Frontend** (`templates/index.html` + `static/`): a tela que o usuário vê.
 - **Backend** (`app.py`): API em Flask que recebe os pedidos e aplica as regras.
-- **Banco** (PostgreSQL no Supabase): onde as tarefas ficam salvas.
+- **Banco** (PostgreSQL no Supabase): onde usuários e tarefas ficam salvos.
+
+Tem cadastro e login: cada usuário só vê e mexe nas próprias tarefas.
 
 O caminho de um clique: o JavaScript faz um `fetch("/api/tarefas")` → o Flask recebe → roda um SQL no banco → devolve JSON → o JavaScript desenha a lista.
 
@@ -18,14 +20,29 @@ sistema-tarefas/
 ├── .env.example        # modelo da variável de conexão com o banco
 ├── .gitignore          # impede que o .env (com senha) vá pro GitHub
 ├── templates/
-│   └── index.html
+│   ├── index.html      # lista de tarefas (só logado)
+│   └── login.html      # telas de entrar e criar conta
 └── static/
     ├── style.css
     ├── script.js
     └── favicon.svg
 ```
 
-## Rotas da API
+## Como o login funciona
+
+1. No cadastro, a senha passa por `generate_password_hash` (algoritmo scrypt). O banco guarda só o hash, nunca a senha.
+2. No login, `check_password_hash` compara a senha digitada com o hash salvo.
+3. Se bater, o Flask grava o `usuario_id` na **sessão**: um cookie assinado com a `SECRET_KEY`. Sem a chave, ninguém consegue forjar esse cookie.
+4. O decorator `@login_obrigatorio` barra quem não tem sessão: páginas mandam para `/login`, a API responde `401`.
+5. Toda consulta de tarefas tem `WHERE usuario_id = ...`, então um usuário não alcança as tarefas de outro, nem chutando o id.
+
+## Rotas
+
+- `GET/POST /login` entrar
+- `GET/POST /cadastro` criar conta
+- `POST /sair` sair
+
+## Rotas da API (exigem login)
 
 - `GET /api/tarefas` lista todas
 - `POST /api/tarefas` cria uma (`{"titulo": "..."}`)
@@ -50,11 +67,17 @@ A tabela é criada sozinha na primeira vez que o sistema roda.
 python -m venv venv
 venv\Scripts\activate          # Windows  (Linux/Mac: source venv/bin/activate)
 pip install -r requirements.txt
-copy .env.example .env         # depois cole sua URL do Supabase no .env
+copy .env.example .env         # depois preencha DATABASE_URL e SECRET_KEY no .env
 python app.py
 ```
 
 Abra http://127.0.0.1:5000
+
+Para gerar a `SECRET_KEY`:
+
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
 
 ## 3. Subir para o GitHub
 
@@ -79,7 +102,9 @@ Confira no GitHub que o arquivo `.env` **não** apareceu lá.
    - Build Command: `pip install -r requirements.txt`
    - Start Command: `gunicorn app:app`
    - Instance Type: **Free**
-4. Em **Environment Variables**, adicione `DATABASE_URL` com a URL do Supabase.
+4. Em **Environment Variables**, adicione:
+   - `DATABASE_URL` com a URL do Supabase
+   - `SECRET_KEY` com uma chave gerada pelo comando acima (use uma diferente da do seu PC). Sem ela o sistema se recusa a subir no Render, de propósito.
 5. Clique em **Deploy**. Em alguns minutos aparece o link `sistema-tarefas-xxxx.onrender.com`.
 
 Toda vez que você der `git push`, o Render publica a nova versão sozinho.
@@ -93,6 +118,7 @@ Para estudo isso não é problema. Para um sistema que a empresa usa todo dia, v
 
 ## Próximos passos para estudar
 
-- Adicionar login (o Supabase tem autenticação pronta).
+- Limitar tentativas de login (biblioteca Flask-Limiter), contra quem tenta adivinhar senhas.
+- Tela para trocar a senha.
 - Editar o título de uma tarefa (nova rota `PUT`).
 - Adicionar um campo de prazo (`ALTER TABLE tarefas ADD COLUMN prazo DATE`).

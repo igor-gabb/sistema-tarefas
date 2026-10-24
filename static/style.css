@@ -133,6 +133,72 @@ li .excluir:hover {
   padding: 14px 0;
 }
 
+/* ---------- login ---------- */
+
+main.estreito {
+  max-width: 380px;
+}
+
+.empilhado {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empilhado label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #888;
+}
+
+.empilhado .erro {
+  margin: 0;
+}
+
+.troca {
+  margin-top: 24px;
+  font-size: 14px;
+  color: #888;
+}
+
+.troca a {
+  color: #fff;
+}
+
+/* ---------- topo com usuário ---------- */
+
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.topo .tag {
+  margin-bottom: 0;
+}
+
+.topo form {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.quem {
+  color: #888;
+}
+
+button.link {
+  background: none;
+  color: #fff;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 400;
+  text-decoration: underline;
+}
+
 footer {
   margin-top: 32px;
   padding-top: 16px;

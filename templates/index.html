@@ -9,9 +9,15 @@
 </head>
 <body>
   <main>
-    <p class="tag">flask + postgresql</p>
-    <h1>Tarefas + teste</h1>
-    <p class="sub">Tudo que você adiciona aqui fica salvo no banco de dados. Feche a página, abra no celular: continua lá.</p>
+    <div class="topo">
+      <p class="tag">flask + postgresql</p>
+      <form method="post" action="{{ url_for('sair') }}">
+        <span class="quem">{{ usuario }}</span>
+        <button type="submit" class="link">Sair</button>
+      </form>
+    </div>
+    <h1>Tarefas</h1>
+    <p class="sub">Suas tarefas ficam salvas no banco e só você vê. Entre pelo celular com o mesmo usuário: continuam lá.</p>
 
     <form id="form">
       <input id="campo" type="text" placeholder="Nova tarefa..." maxlength="200" autocomplete="off" required>
