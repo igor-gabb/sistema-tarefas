@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarefas</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main>
+    <p class="tag">flask + postgresql</p>
+    <h1>Tarefas</h1>
+    <p class="sub">Tudo que você adiciona aqui fica salvo no banco de dados. Feche a página, abra no celular: continua lá.</p>
+
+    <form id="form">
+      <input id="campo" type="text" placeholder="Nova tarefa..." maxlength="200" autocomplete="off" required>
+      <button type="submit">Adicionar</button>
+    </form>
+
+    <p id="erro" class="erro"></p>
+
+    <ul id="lista"></ul>
+    <p id="vazio" class="vazio">Nenhuma tarefa ainda.</p>
+
+    <footer><span id="resumo"></span></footer>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
